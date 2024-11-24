@@ -3,6 +3,20 @@ defmodule KV.Router do
   Dispatch the given 'mod', 'fub', 'args' request
   to the appropriate node based on the 'bucket'.
   """
+  def this_node?(bucket) do
+    first = :binary.first(bucket)
+
+    entry =
+      Enum.find(table(), fn {enum, _node} ->
+        first in enum
+      end) || no_entry_error(bucket)
+
+    if elem(entry, 1) == node() do
+      true
+    else
+      false
+    end
+  end
 
   def route(bucket, mod, fun, args) do
     first = :binary.first(bucket)

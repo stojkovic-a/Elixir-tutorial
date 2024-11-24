@@ -10,7 +10,8 @@ defmodule KV.Supevisor do
     children = [
       {DynamicSupervisor, name: KV.BucketSupervisor, strategy: :one_for_one},
       {KV.Registry, name: KV.Registry},
-      {Task.Supervisor, name: KV.RouterTasks}
+      {Task.Supervisor, name: KV.RouterTasks},
+      {KV.Saver, []}
     ]
 
     Supervisor.init(children, strategy: :one_for_all)
