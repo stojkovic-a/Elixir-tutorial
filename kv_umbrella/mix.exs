@@ -17,7 +17,6 @@ defmodule KvUmbrella.MixProject do
           version: "0.0.1",
           applications: [kv: :permanent],
           cookie: "weknoweachother"
-
         ]
       ]
     ]

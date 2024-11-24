@@ -51,7 +51,6 @@ defmodule KV.Registry do
   # end
   @impl true
   def handle_call({:create, name}, _from, {names, refs}) do
-    Supervisor.Spec.supervisor()
     case lookup(names, name) do
       {:ok, pid} ->
         {:reply, pid, {names, refs}}
