@@ -67,7 +67,7 @@ telnet 127.0.0.1 4040
 
 Project is meant as a demonstration and a tutorial of BEAM's (Bogdan / Björn's Erlang Abstract Machine) also known as Erlang Virtual Machine, capabilities for achieving fault tolerant and highly available systems.  
 
-Primarily used here is Elixir programming language which also runs on Erlang Virutal Machine but with a more modern syntax. 
+Primarily used here is Elixir programming language which also runs on Erlang Virutal Machine with a more modern syntax but with an access to old Erlang directives.
 
 Different modules are used here to demonstrate different components that are combined to create a fault tolerant system.
 
@@ -119,3 +119,11 @@ More on Supervisors [here](https://hexdocs.pm/elixir/supervisor-and-application.
 ```
 
 ### KV_Server:
+
+* KVServer module uses the Erlang's :gen_tcp structure for communication via ports. Specifically using the following methods:
+ * **accept()** creates a socket that listens on a given port.
+ * **loop_acceptor()** listens for a request on a created sockets and upon receiving a request creates a Task process mean to handle the request asynchronously while it continues to listen for a next request.
+ * **serve()** method handles the received requests by envoking appropriate methods for parsing and running the parsed command.
+ * **read_line()** reads a line from socket.
+ * **write_line()** writes a line through socket.
+* KVServer.Command module holds 
