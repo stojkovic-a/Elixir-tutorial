@@ -1,4 +1,5 @@
-# Elixir-tutorial
+# Elixir-tutorial <img src="https://cdn.icon-icons.com/icons2/2699/PNG/512/elixir_lang_logo_icon_169207.png" width="48">
+
 Distributed key-value store as an elixir tutorial example.
 
 
@@ -51,8 +52,8 @@ Once again to use the app, in a separate terminal:
 ```
 telnet 127.0.0.1 4040
 ```
-
-## User instructions:
+> [!TIP]
+> ## User instructions:
 
 * Application has a server listening on a port 4040 by default this can be changed by setting the system environment variable PORT to the desired value.
 * Available commands to interact with the Key-Value store are:
@@ -121,9 +122,31 @@ More on Supervisors [here](https://hexdocs.pm/elixir/supervisor-and-application.
 ### KV_Server:
 
 * KVServer module uses the Erlang's :gen_tcp structure for communication via ports. Specifically using the following methods:
- * **accept()** creates a socket that listens on a given port.
- * **loop_acceptor()** listens for a request on a created sockets and upon receiving a request creates a Task process mean to handle the request asynchronously while it continues to listen for a next request.
- * **serve()** method handles the received requests by envoking appropriate methods for parsing and running the parsed command.
- * **read_line()** reads a line from socket.
- * **write_line()** writes a line through socket.
-* KVServer.Command module holds 
+  * **accept()** creates a socket that listens on a given port.
+  * **loop_acceptor()** listens for a request on a created sockets and upon receiving a request creates a Task process mean to handle the request asynchronously while it continues to listen for a next request.
+  * **serve()** method handles the received requests by envoking appropriate methods for parsing and running the parsed command.
+  * **read_line()** reads a line from socket.
+  * **write_line()** writes a line through socket.
+
+* KVServer.Command module implements methods for pasing instruction lines read from socket and for calling appropriate methods to handle those instructions:
+  * **parse()** parses the given instruction line to instructions and instruction arguments.
+  * **lookup()** uses the KV.Router.route/4 method to execute an anonymous function on a node containing the given bucket.
+  * **run()** method is overloaded so that it can handle each of the possible instructions by calling the corresponding method from KV applications using remote procedure calls and _lookup()_ method.
+ 
+ * KVServer.Application module is equivalent to the KV module from KV application, i.e., it is an entrance for KV_Server application. As such it implements:
+   * **start()** method that reads a port number from system environment variables and also starts the head-of-supervision-tree-hierarchy Supervisor by defining its children specifications and subsequently calling the Supervisor.start_link(). Note that we did not implement the Supervisor by injecting its code in our module like in KV but by directly calling is starting method. Elixir allows both approaches and the first one is favorable when we need to ensure some custom behaviour for our Supervisor.
+ * **mix.exs** file has to specify that KV_Server depends on KV application which is done inside of _deps()_ method.
+ ```elixir
+  defp deps do
+    [
+      {:kv, in_umbrella: true}
+    ]
+  end
+  ```
+
+> [!NOTE]
+> Finally the author of this Elixir tutorial strongly suggests watching the following Elixir demonstration video as it provides great insights in Elixir capabilities:
+
+<a href="https://www.youtube.com/watch?v=JvBT4XBdoUE&t=1589s
+" target="_blank"><img src="http://img.youtube.com/vi/JvBT4XBdoUE&t=1589s/0.jpg" 
+alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
