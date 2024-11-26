@@ -147,6 +147,6 @@ More on Supervisors [here](https://hexdocs.pm/elixir/supervisor-and-application.
 > [!NOTE]
 > Finally the author of this Elixir tutorial strongly suggests watching the following Elixir demonstration video as it provides great insights in Elixir capabilities:
 >
-><a href="https://www.youtube.com/watch?v=JvBT4XBdoUE&t=1589s
+><a href="https://www.youtube.com/watch?v=JvBT4XBdoUE
 " target="_blank"><img src="http://img.youtube.com/vi/JvBT4XBdoUE/0.jpg" 
 alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
