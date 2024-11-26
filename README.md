@@ -54,15 +54,15 @@ telnet 127.0.0.1 4040
 ```
 > [!TIP]
 > ## User instructions:
-
-* Application has a server listening on a port 4040 by default this can be changed by setting the system environment variable PORT to the desired value.
-* Available commands to interact with the Key-Value store are:
-  * **CREATE** _bucket_name_  -  Used to create a new bucket by the name of _bucket_name_ which stores key-value pairs.
-  * **PUT** _bucket_name_ _key_ _value_  -  Sets the given value for a given key in a given bucket.
-  * **GET** _bucket_name_ _key_  -  Return the value associated with a given key in a given bucket.
-  * **DELETE** _bucket_name_ _key_  -  Removes the given key value pair from a given bucket.
-* kv_umbrella/config/runtime.exs defines the routing table for development and for production. It describes how are bucekts distributed across available nodes.
-* kv_umbrella/mix.exs defines the number and names of nodes in application. Each of the releases equals to one node.
+>
+>* Application has a server listening on a port 4040 by default this can be changed by setting the system environment variable PORT to the desired value.
+>* Available commands to interact with the Key-Value store are:
+>  * **CREATE** _bucket_name_  -  Used to create a new bucket by the name of _bucket_name_ which stores key-value pairs.
+>  * **PUT** _bucket_name_ _key_ _value_  -  Sets the given value for a given key in a given bucket.
+>  * **GET** _bucket_name_ _key_  -  Return the value associated with a given key in a given bucket.
+>  * **DELETE** _bucket_name_ _key_  -  Removes the given key value pair from a given bucket.
+>* kv_umbrella/config/runtime.exs defines the routing table for development and for production. It describes how are bucekts distributed across available nodes.
+>* kv_umbrella/mix.exs defines the number and names of nodes in application. Each of the releases equals to one node.
 
 ## Project description:
 
@@ -146,7 +146,7 @@ More on Supervisors [here](https://hexdocs.pm/elixir/supervisor-and-application.
 
 > [!NOTE]
 > Finally the author of this Elixir tutorial strongly suggests watching the following Elixir demonstration video as it provides great insights in Elixir capabilities:
-
-<a href="https://www.youtube.com/watch?v=JvBT4XBdoUE&t=1589s
-" target="_blank"><img src="http://img.youtube.com/vi/JvBT4XBdoUE&t=1589s/0.jpg" 
+>
+><a href="https://www.youtube.com/watch?v=JvBT4XBdoUE&t=1589s
+" target="_blank"><img src="http://img.youtube.com/vi/JvBT4XBdoUE/0.jpg" 
 alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
