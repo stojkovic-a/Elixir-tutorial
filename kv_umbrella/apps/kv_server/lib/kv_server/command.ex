@@ -1,6 +1,6 @@
 defmodule KVServer.Command do
   @doc ~S"""
-    Parses the given 'ine' into a command.
+    Parses the given 'line' into a command.
 
     ## Examples
 
