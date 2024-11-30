@@ -85,7 +85,7 @@ defmodule HelloWorld do
 end
 
 #Start a new process to run the greet function
-spawn(HelloWorld, :greet)
+spawn(fn -> HelloWorld.greet() end)
 ```
 
 How to Run This Code:
