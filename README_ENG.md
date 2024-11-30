@@ -2,8 +2,14 @@
 
 Distributed key-value store as an elixir tutorial example.
 
-Elixir is a modern, functional, dynamically typed, general purpose programming language running on BEAM virtual machine. It is used for creating distributed, fault tolerant systems.
+## Purpose of the Tutorial
 
+This tutorial provieds a practical introduction to Elixir and its capabilities for building distributed, fault-tolerant systems. Through a practical example, a key-value store implemented as an umbrella project, a reader will learn:
+  1. How to design and implement fault-tolerant systems using Elixir processes.
+  2. The role of key abstractions like Agents, GenServers, and Supervisors in building resilient applications.
+  3. How to distribute the workload across multiple nodes.
+
+By the end of this, a read will have a functional understanding of Elixir's core concepts and be able to apply them to create their own scalable and robust applications.
 
 ## Getting started
 
@@ -68,11 +74,11 @@ telnet 127.0.0.1 4040
 
 ## Project description:
 
-Project is meant as a demonstration and a tutorial of BEAM's (Bogdan / Björn's Erlang Abstract Machine) also known as Erlang Virtual Machine, capabilities for achieving fault tolerant and highly available systems.  
+Modern distributed applications often face challenges in maintaining high availability, scalability, and fault tolerance, especially in the presence of network failures or unexpected crashes. These challenges are compounded by the need to manage system state across multiple nodes while ensuring minimal downtime.
 
-Primarily used here is Elixir programming language which also runs on Erlang Virutal Machine with a more modern syntax but with an access to old Erlang directives.
+This project demonstrates a distributed key-value store built using Elixir, a programming language designed for creating fault-tolerant and highly available systems. The underlying BEAM (Bogdan / Björn's Erlang Abstract Machine) virtual machine enables lightweight concurrency and robust process isolation, making Elixir particularly suited for building resilient systems.
 
-Different modules are used here to demonstrate different components that are combined to create a fault tolerant system.
+By following this tutorial, you will gain a practical understanding of how to leverage Elixir's unique features, such as its supervision trees and actor model concurrency, to build reliable distributed systems.
 
 Firstly project is a umbrella type elixir project which means that it consists of 2 separate applications weakly bound together through a one-way dependency. Applications are in kv_umbrella/apps directory:
 
@@ -83,7 +89,7 @@ Firstly project is a umbrella type elixir project which means that it consists o
 
 ---
 
-Elixir achieves fault tolerance throgh concurency. Every elixir application consists of separate Elixir processes. Elixir process are very lightweighted and are all exectued in a single OS process. Each of the Elixir processes run concurently and their execution is controlled by the Elixir process schedular. In a single Elixir process code is exectued sequentially. Each of the Elixir processes can spawn antother procces using a _spawn()_ method. Beside creating each other process can also communicate through message passing. Everything an application needs can subsequently be achived through spawning a process to either exectue some statements, to hold a cetrain state, or to supervise and restart another process.
+Elixir achieves fault tolerance throgh concurency. Every elixir application consists of separate Elixir processes. Elixir process are very lightweight and are all executed in a single OS process. Each of the Elixir processes run concurently and their execution is controlled by the Elixir process schedular. In a single Elixir process code is executed sequentially. Each of the Elixir processes can spawn antother procces using a _spawn()_ method. Beside creating each other process can also communicate through message passing. Everything an application needs can subsequently be achived through spawning a process to either execute some statements, to hold a cetrain state, or to supervise and restart another process.
 
 ### KV:
 
@@ -109,7 +115,7 @@ More on [Supervisors](https://hexdocs.pm/elixir/supervisor-and-application.html)
 
 * KV.Router is module that reads the routing table from _runtime.exs_ and routes requests to the correct node.
 * KV module is entrance for the KV application. It injects the code _use Application_ which enables us to implement the starting function of the application:
-  * **start()** which starts the top supervisor in the Supervision hierarchy.
+  * **start()** which starts the top Supervisor in the supervision hierarchy.
 * **mix.exs** file in KV application is a file that describes the application and its dependencies. It is also a file where we specify whcih module has the application entrance. Here it is KV module.
 ```elixir
   def application do
@@ -145,6 +151,25 @@ More on [Supervisors](https://hexdocs.pm/elixir/supervisor-and-application.html)
     ]
   end
   ```
+
+## Alternative technologies:
+
+**Why Elixir?**
+
+Several technologies are available for building distributed fault-tolerant systems, including:
+  * Akka (Scala): A toolkit for building concurrent, distributed, and fault-tolerant applications using the actor model on the Java Virtual Machine, but its syntax and fault-tolerance patterns are more complex and less intuitive and also Elixir processes are more lightweight.
+  * Golang: Provides goroutiens for lightweight concurrency, but lacks built-in support for dsitributed supervision and fault recovery.
+  * Node.js with clustering: Enables scaling acroess multiple processes but requires additional libraries for fault tolerance.
+
+Elixir stads out due to:
+
+  * Its tight integration with the BEAM virtual machine, which is optimized for concurrency and fault tolerance.
+  * A developer-friendly syntax and built-in tools for handling failures through Supervisors and GenServers.
+  * A strong ecosytem for distributed programming.
+
+Therefore Elixir stands out as a choice for scenarios where reliability, scalability, and fault recovery are of critical importance.
+
+---
 
 > [!NOTE]
 > Finally the author of this Elixir tutorial strongly suggests watching the following Elixir demonstration video as it provides great insights in Elixir capabilities:
