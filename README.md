@@ -2,6 +2,8 @@
 
 Distributed key-value store as an elixir tutorial example.
 
+Elixir is a modern, functional, dynamically typed, general purpose programming language running on BEAM virtual machine. It is used for creating distributed, fault tolerant systems.
+
 
 ## Getting started
 
@@ -11,7 +13,7 @@ Elixir installation documentation is available [here](https://elixir-lang.org/in
 
 Erlang installation documentation is available [here](https://www.erlang.org/downloads).
 
-It is suggested to install them using a version manager such as [asdf](https://asdf-vm.com/guide/getting-started.html) for that.
+It is suggested to install them using a version manager such as [asdf](https://asdf-vm.com/guide/getting-started.html).
 
 Elixir plugin for asdf is available at (https://github.com/asdf-vm/asdf-elixir) while erlang plugin is available at (https://github.com/asdf-vm/asdf-erlang).
 
@@ -57,11 +59,11 @@ telnet 127.0.0.1 4040
 >
 >* Application has a server listening on a port 4040 by default this can be changed by setting the system environment variable PORT to the desired value.
 >* Available commands to interact with the Key-Value store are:
->  * **CREATE** _bucket_name_  -  Used to create a new bucket by the name of _bucket_name_ which stores key-value pairs.
->  * **PUT** _bucket_name_ _key_ _value_  -  Sets the given value for a given key in a given bucket.
->  * **GET** _bucket_name_ _key_  -  Return the value associated with a given key in a given bucket.
->  * **DELETE** _bucket_name_ _key_  -  Removes the given key value pair from a given bucket.
->* kv_umbrella/config/runtime.exs defines the routing table for development and for production. It describes how are bucekts distributed across available nodes.
+>   * **CREATE** _bucket_name_  -  Used to create a new bucket by the name of _bucket_name_ which stores key-value pairs.
+>   * **PUT** _bucket_name_ _key_ _value_  -  Sets the given value for a given key in a given bucket.
+>   * **GET** _bucket_name_ _key_  -  Return the value associated with a given key in a given bucket.
+>   * **DELETE** _bucket_name_ _key_  -  Removes the given key value pair from a given bucket.
+>* kv_umbrella/config/runtime.exs defines the routing table for development and for production. It describes how buckets are distributed across available nodes.
 >* kv_umbrella/mix.exs defines the number and names of nodes in application. Each of the releases equals to one node.
 
 ## Project description:
@@ -77,11 +79,11 @@ Firstly project is a umbrella type elixir project which means that it consists o
 | Applications  | Description                                                | 
 | ------------- |:----------------------------------------------------------:| 
 | kv            | Key-value store. Manages buckets. Periodic permanent save. |
-| kv_server     | Listends on a socket. Parses commands. Calls kv metgods.   |
+| kv_server     | Listens on a socket. Parses commands. Calls kv methods.   |
 
 ---
 
-Elixir achieves fault tolerance throgh concurency. Every elixir application consists of separate Elixir processes. Elixir process are very lightweighted and are all exectued in a single OS process. Each of the Elixir processes run concurently and their execution is controlled by the Elixir process schedular. In a single Elixir process code is exectued sequentially. Each of the Elixir processes can spawn antother procces using a _spawn()_ method. Beside creating each other process can also communicate through message passing. Everything an application needs can subsequently be achived through spawning a process to either exectue some statemnts, to hold a cetrain state, or to supervise and restart another process.
+Elixir achieves fault tolerance throgh concurency. Every elixir application consists of separate Elixir processes. Elixir process are very lightweighted and are all exectued in a single OS process. Each of the Elixir processes run concurently and their execution is controlled by the Elixir process schedular. In a single Elixir process code is exectued sequentially. Each of the Elixir processes can spawn antother procces using a _spawn()_ method. Beside creating each other process can also communicate through message passing. Everything an application needs can subsequently be achived through spawning a process to either exectue some statements, to hold a cetrain state, or to supervise and restart another process.
 
 ### KV:
 
@@ -103,7 +105,7 @@ You can find out more about GenServers [here](https://hexdocs.pm/elixir/genserve
   * **start_link()** here starts the Supervisor by calling its _start_link()_ method.
   * Which we have to implement with a **init()** method. To start a Supervisor we need to define its children. When a Supervisor starts it also starts each of its children. Often, as is also the case here, Supervisor starts other Supervisors and creates a whole hierarchy of supervision. This Supervisor starts one DynamicSupervisor used to monitor buckets. DynamicSupervisors are used when number of children changes dynamically. It also starts modules KV.Saver, KV.Registry and, Task.Supervisor by the name of KV.RouterTasks. Task.Supervisors are used to ensure simple Tasks are executed correctly. More on [Tasks](https://hexdocs.pm/elixir/task-and-gen-tcp.html#tasks).
 
-More on Supervisors [here](https://hexdocs.pm/elixir/supervisor-and-application.html) and [DynamicSupervisors](https://hexdocs.pm/elixir/dynamic-supervisor.html).
+More on [Supervisors](https://hexdocs.pm/elixir/supervisor-and-application.html) and [DynamicSupervisors](https://hexdocs.pm/elixir/dynamic-supervisor.html).
 
 * KV.Router is module that reads the routing table from _runtime.exs_ and routes requests to the correct node.
 * KV module is entrance for the KV application. It injects the code _use Application_ which enables us to implement the starting function of the application:
