@@ -4,7 +4,7 @@ Distributed key-value store as an elixir tutorial example.
 
 ## Purpose of the Tutorial
 
-This tutorial provieds a practical introduction to Elixir and its capabilities for building distributed, fault-tolerant systems. Through a practical example, a key-value store implemented as an umbrella project, a reader will learn:
+This tutorial provides a practical introduction to Elixir and its capabilities for building distributed, fault-tolerant systems. Through a practical example, a key-value store implemented as an umbrella project, a reader will learn:
   1. How to design and implement fault-tolerant systems using Elixir processes.
   2. The role of key abstractions like Agents, GenServers, and Supervisors in building resilient applications.
   3. How to distribute the workload across multiple nodes.
@@ -76,7 +76,7 @@ telnet 127.0.0.1 4040
 
 ### Getting Started with Elixir:
 
-Before diving into the project demonstration, let's explore a simple "Hello World" demonstartion using Elixir processes. This will help you understand the basics of how processes work in Elixir.
+Before diving into the project demonstration, let's explore a simple "Hello World" demonstration using Elixir processes. This will help you understand the basics of how processes work in Elixir.
 ```elixir
 defmodule HelloWorld do
   def greet do
@@ -101,7 +101,7 @@ Hello world!
 
 Explanation:
 * The _spawn/2_ function created a new Eliir process that executed the _HelloWorld.greet/0_ function.
-* Processes in Elixir are completely isolated, meaning they don't share memory. This isolation is a key ascpet of Elixir's fault tolerance and scalability.
+* Processes in Elixir are completely isolated, meaning they don't share memory. This isolation is a key aspect of Elixir's fault tolerance and scalability.
 
 Example: Sending and Receiving Messages:
 ```elixir
@@ -116,7 +116,7 @@ end
 
 # Start a new process and send it a message
 pid = spawn(Messenger, :listen, [])
-send(pid, "Hello, Elixir!")
+send(pid, "Hello Elixir!")
 ```
 
 How to Run This Code:
@@ -129,6 +129,11 @@ iex send_receive.exs
 ```
 Received message: Hello Elixir!
 ```
+
+Explanation:
+* receive function listens for any message sent to the process running the function and upon receiving the message it prints the received message.
+* Process running the receive function is created and its pid is saved in a variable.
+* From current process message is sent to the process runing the receive function.
 
 After understanding these examples you are ready to tackle the tutorial project.
 
