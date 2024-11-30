@@ -72,6 +72,67 @@ telnet 127.0.0.1 4040
 >* kv_umbrella/config/runtime.exs defines the routing table for development and for production. It describes how buckets are distributed across available nodes.
 >* kv_umbrella/mix.exs defines the number and names of nodes in application. Each of the releases equals to one node.
 
+---
+
+### Getting Started with Elixir:
+
+Before diving into the project demonstration, let's explore a simple "Hello World" demonstartion using Elixir processes. This will help you understand the basics of how processes work in Elixir.
+```elixir
+defmodule HelloWorld do
+  def greet do
+    IO.puts("Hello world!")
+  end
+end
+
+#Start a new process to run the greet function
+spawn(HelloWorld, :greet)
+```
+
+How to Run This Code:
+1.  Save the code above to a file named hello_world.exs
+2.  Run the file in the Elixir interactive shell (IEx):
+```
+iex hello_world.exs
+```
+3.  You should see the following output:
+```
+Hello world!
+```
+
+Explanation:
+* The _spawn/2_ function created a new Eliir process that executed the _HelloWorld.greet/0_ function.
+* Processes in Elixir are completely isolated, meaning they don't share memory. This isolation is a key ascpet of Elixir's fault tolerance and scalability.
+
+Example: Sending and Receiving Messages:
+```elixir
+defmodule Messenger do
+  def listen do
+    receive do
+      message -> 
+        IO.puts("Received message: #{message}")
+    end
+  end
+end
+
+# Start a new process and send it a message
+pid = spawn(Messenger, :listen, [])
+send(pid, "Hello, Elixir!")
+```
+
+How to Run This Code:
+1. Save the code above to a file names send_receive.exs
+2. Run the file in the Elixir interactive shell (IEx):
+```
+iex send_receive.exs
+```
+3. You should see the follwoing output:
+```
+Received message: Hello Elixir!
+```
+
+After understanding these examples you are ready to tackle the tutorial project.
+
+
 ## Project description:
 
 Modern distributed applications often face challenges in maintaining high availability, scalability, and fault tolerance, especially in the presence of network failures or unexpected crashes. These challenges are compounded by the need to manage system state across multiple nodes while ensuring minimal downtime.
