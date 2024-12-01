@@ -2,7 +2,7 @@
 
 Distribuirani key-value store kao primer učenja Elixir-a.
 
-##Svrha tutorijala:
+## Svrha tutorijala:
 
 Ovaj tutorijal pruža praktični uvod u Elixir i njegove sposobnosti za razvijanje distribuiranih sistema otpornih na greške, kroz praktičan primer, key-value store, implementiran kao umbrella projekat, čitalac će naučiti:
   1. Kako da projektuje i implementira sisteme otporne na greške korišćenjem Elixir procesa.
