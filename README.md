@@ -194,3 +194,53 @@ Vise o [Supervisor-ima](https://hexdocs.pm/elixir/supervisor-and-application.htm
 ```
 
 ### KV_Server:
+
+* KVServer moduo koristi Erlang-ovu :gen_tcp strukturu za komunikaciju preko socketa na određenom portu. Konkretno koriste se sledeće metode:
+  * **accept()** kreira novi socket koji sluša na datom portu.
+  * **loop_accpetor()** osluškuje za zahtev na kreiranom sokcet-u i kada zahtev stigne kreira Task proces koji hendluje zahtev asinhrono dok on nastavlja da osluškuje za sledeći zahtev.
+  *  **serve()** metoda obrađuje primljeni zahtev tako što poziiva metode za parsiranje i izvršavanje parsirane komande.
+  *  **read_line()** čita red teksta iz socket-a.
+  *  **write_line()** upisuje red teksta preko socket-a.
+
+* KVServer.Command moduo implementira metoda za parsiranje instrukcija pročitanih iz socket-a i za pozivanje odgovarajućih metoda na osnovu tih instrukcija:
+  * **parse()** parsira dati instrukcioni string na komandu i argumente.
+  * **lookup()** koristi KV.Router.route/4 metodu kako bi izvršio anonimnu funkciju na čvoru koji je zadužen za dati bucket.
+  * **run()** metoda je overload-ovano tako da može da izvrši svaku moguću instrukciju, pozivanjem odgovarajuće metode KV aplikacije RPC principom uz pomoć _lookup()_ metode.
+ 
+* KVServer.Application moduo je ekvivalent KV modulu iz KV aplikacije, tj. on je ulaz za KV_Server aplikaicju. Kao takav on implementira:
+  * **start()** metodu koju čita broj porta iz sistemske environment promenljive i takođe pokreće Supervisor koji se nalazi na čelu hijerarhije supervizije, definišući njegovu decu procese i zatim pozivajući Supervisor.start_link() metodu. Obratiti pažnju da ovde nismo implementirali Supervisor injektovanjem koda u nas moduo već smo direktno zvali metodu koja ga pokreće. Elixir omogućava oba ova pristupa, tako da je prvi pristup poželjan kada je potrebno da obezbedimo neko svojstveno ponašanje za naš Supervisor.
+* **mix.exs** fajl specificira da KV_Server zavisi od KV aplikacije, tj. definiše dependency. Ovo specificiranje se vrši u _deps()_ metodi.
+ ```elixir
+  defp deps do
+    [
+      {:kv, in_umbrella: true}
+    ]
+  end
+  ```
+
+## Alternativne tehnologije:
+
+**Zašto Elixir?**
+
+Par tehnologija postoji za razvoj distribuiranih sistema otpornih na greške, uključujući:
+  * Akka (Scala): Toolkit za razvoj konkurentnih, distribuiranih i otpornih na greške aplikacija korišćenjem akter modela na Java Virtualnoj Mašini, međutim njegova sintaksa i obrasci za otpornost na greške su isuviše kompleksni i neintuitivni, pored toga Elixir procesi su manje zahtevni po pitanju resursa.
+  * Golang: Pruža goroutines za lightweight konkurentnost, ali nedostaje mu ugrađena podrška za distribuirano nadgledanje i oporavak od grešaka.
+  * Node.js with clustering: Omogućava skaliranje kroz više procesa ali zahteva dodatne biblioteke za otpornost na greške.
+
+Elixir se izdvaja zato što:
+
+  * Njegova integracija sa BEAM virtualnom mašinom je optimizovana za konkurentnost i otpornost na greške.
+  * Sintaksa je developer friendly i postoje ugrađeni alati za hendlovanje grešaka korišćenjem Supervisor-a i GenServer-a.
+  * Jak ekosistem za distribuirano programiranje.
+
+Dakle Elixir se izdvaja kao izbor u scenariju kada su pouzdanost, skalabilnost i oporavak od greški od kritične važnosti.
+
+---
+
+
+> [!NOTE]
+> Na posletku autor ovog Elixir tutorijala predlaže da se odlgeda sledeći Elixir demonstracioni video jer su u njemu na kreativan način prikaze mogućnosti Elixir-a:
+>
+><a href="https://www.youtube.com/watch?v=JvBT4XBdoUE
+" target="_blank"><img src="http://img.youtube.com/vi/JvBT4XBdoUE/0.jpg" 
+alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
