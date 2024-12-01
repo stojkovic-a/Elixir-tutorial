@@ -140,14 +140,57 @@ Nakon što su ovi primeri jasni spremni ste da pređete na tutorijal projekat.
 
 ## Opis projekta:
 
+Izazovi sa kojima se često suočavaju moderne distribuirane aplikacije su održavanje visoke dostupnosti, skalabilnosti i otpornosti na greške, posebno u slučajevima prisustva mrežnih grešaka i neočekivanih otkaza. Ovi izazovi se dodatno komplikuju potrebom za upravljanje stanjem sistema na više čvorova a pri tome održavanjem minimalnog prekida rada.
 
+Ovaj projekat demonstrira distribuiran key-value store razvijen u Elixir-u, programskom jeziku projektovanom za kreiranje sistema otpornih na greške sa visokom dostupnošću. BEAM (Bogdan / Björn's Erlang Abstract Machine) virtuelna mašina na kojoj se izvršavaju aplikacije pisane u Elixir-u, omogućava lightwieght konkurentnost i robusnu izolaciju procesa, što čini Elixir dobrim izborom za razvijanje otpronish sistema.
 
+Praćenjem ovog tutorijala, čitalac će steći praktično razumevanje korišćenja Elixir-ovih jedinstvenih karakteristika poput stabla supervizije i modela konkurentnosti i kako da ih upotrebi za razvijanje otpornih distribuiranih sistema.
 
+Najpre, projekat je umbrella tip elixir projekat, što znači da se sastoji od 2 odvojene aplikacije koju su slabo povezane kroz jednosmeran dependency. Aplikacije su u direktorijumu kv_umbrella/apps:
 
+| Aplikacije    | Opis                                                               | 
+| ------------- |:------------------------------------------------------------------:| 
+| kv            | Key-value store. Upravlja bucket-ima. Periodično trajsno snimanje. |
+| kv_server     | Sluša na socket-u. Parsira komande. Poziva kv metode.              |
 
+---
 
+Elixir postiže otpornost na greške korišćenjem konkurentnosti. Svaka Elixir aplikacija se sastoji od odvojenih Elixir procesa. Elixir procesi su veoma lagani po pitanje resursa i izvršavaju se u jednom OS procesu. Svaki Elixir proces se izvršava konkurentno i njihovim izvršenjem upravlja Elixir proces schedular. Schedular u osnovi funkcioniše po Round Robin principu sa određenim modifikacijama koje nastoje da poboljšaju performanse sistema kao celine. U okviru jednog Elixir procesa kod se izvršava sekvencijalno. Svaki Elixir proces može da započne novi proces korišćenjem _spawn()_ metode. Pored međusobnog kreiranja svaki proces takođe može i da komunicira preko slanja poruka sa drugim procesima. Sve što je potrebno za rad jedne aplikacije se može postići kreiranjem procesa koji će ili izvršiti funkcije ili održavati određeno stanje ili nadgledati i po potrebi restartovati druge procese.
 
+### KV:
 
+* KV.Bucket moduo je Agent proces. Agenti su procesi koji su kreirani tako da imaju određeno stanje koje pamte i vraćaju ga po potrebi. Elixir pruža _use Agent_ kao način da se u moduo injektuje kod koji će nam obezbediti metode potrebne za upis u stanje i vraćanje vrednosti stanja. U ovom projektu svaki bucket čuva proizvoljan broj key-value parova. Agenti se pokreću start_link funkcijom koje mora biti implementirana u modulu. Stanju agenta se može pristupati i može biti naknadno menjano instrukcijama poput:
+  * **Agent.get()**
+  * **Agent.update()**
+  * **Agent.get_and_update()**
+ 
+Dokumentaciju za Agente možete naći [ovde](https://hexdocs.pm/elixir/agents.html).
 
+* KV.Registry je GenServer proces. GenServer-i su procesi koji obezbeđuju klijent-server komunikaciju između procesa. GenServer proces konkretno prima zahteve u vidu poruka od drugih procesa i za svaku poruku izvršava  odgovarajuću metodu. Slično kao kog Agent-a kod se injektuje u moduo korišćenjem _use GenServer_ makroa koji obezbeđuje metode za primanje zahteva i slanje odgovora. Značajne metode u KV.Registry modulu su:
+  * **start_link()** metoda se poziva kako bi inicijalizovali KV.Registry moduo. Ona poziva _GenServer.start_link()_ metodu  koja inicijalizuje GenServer. Mi moramo da napišemo i kod koji će izvršiti deo inicijalizacije GenServer-a, odnosno _use GenServer_ zahteva overload-ovanje metode **init()**. Konkretno ovde ets (Erlang Term Storage) i bezimena mapa se inicijalizuju i postavljaju kao stanje GenServer-a. Neimenova mapa je jednostavna heš tabela dok je ets ugrađeni tip keš-a u Elixir-u. O ets tabeli možete saznati više [ovde](https://hexdocs.pm/elixir/erlang-term-storage.html).
+  * Ostale metode koje _use GenServer_ zahteva su **handle_call()** što je metoda koja upravlja sinhronim zahtevima i **handle_cast()** metoda koja upravlja asinhronim zahtevima. GenServer takođe pruža i **handle_info)=** kao način za hendlovanje direktnih poruka od strane procesa GenServer-u.
 
+Više o GenServer-ima možete pronaći [here](https://hexdocs.pm/elixir/genservers.html).
+* KV.Saver moduo je takođe GenServer proces. Ovaj moduo pominjemo zato što implementira česti Elixir projektni obrazac kod koga GenServer periodično šalje poruke samom sebi kako bi obezbedio da se neka funkcija izvršava periodično. Ovde konkretno sadržaj key-value paroa se povremeno snima u fajl u stalnoj memoriji. Vise o radu sa fajlovima možete naći [ovde](https://hexdocs.pm/elixir/io-and-the-file-system.html).
 
+* KV.Superviosr je Supervisor proces. Kod je u njega injektovan pomoću _use Supervisor_. Supervisor procesi nadgeldaju druge procese i restartuju ih nakon njihovog pada ili završetka izvršenja, na osnovu izabrane strategije restartovanja.
+  * **start_link()** ovde pokreće Supervisor pozivanjem njegove _start_link()_ metode.
+  * Na nama je da implementiramo deo pokretranja Supervisor-a **init()** metodom. Od ove metode se očekuje da definiše decu procese Supervisor-a. Kada se Superviosr pokrene on će ujedno pokrenuti i svaki od navedenih dece. Ćesto, kao što je i ovde slučaj, Supervisor pokreće druge Supervisor-e i kreira čitavu hijerarhiju supervizije. Ovde Supervisor pokreće jedan DynamicSupervisor koji će nadgledati bucket procese. DynamicSupervisor-i se koriste kada se broj dece menja dinamički. Glavni Supervisor ovde takođe pokreće i module KV.Saver, KV.Registry i Task.Supervisor po imenu KV.RouterTasks. Task.Superviosr-i se koriste za nadgledanje jednostavnih Task-ova koji ne zahtevaju definisanje posebnig modula. Vise o [Task-ovima](https://hexdocs.pm/elixir/task-and-gen-tcp.html#tasks).
+
+Vise o [Supervisor-ima](https://hexdocs.pm/elixir/supervisor-and-application.html) i [DynamicSupervisor-ima](https://hexdocs.pm/elixir/dynamic-supervisor.html).
+
+* KV.Router je moduo koji čita routing tabelu iz _runtime.exs_ i rutira zahteve onom čvoru u distribuiranom sistemu na kome treba izvršiti taj zahtev.
+* KV moduo je ulaz u KV aplikaciju. Injektuje kod sa _use Application_ koji omogućava implementiranje početne metode aplikacije:
+  * **start()** koja pokreće glavni Supervisor u hijerarhiji Supervisor-a.
+* **mix.exs** fajl u KV aplikaciji je fajle koji opisuje aplikaciju i njene dependency-je. Ovaj fajl takođe specificira moduo koji predstavlja ulaz u aplikaciju. Dakle to je prethodno pomenuti KV moduo.  
+```elixir
+  def application do
+    [
+      extra_applications: [:logger, :jason],
+      env: [routing_table: []],
+      mod: {KV, []}
+    ]
+  end
+```
+
+### KV_Server:
