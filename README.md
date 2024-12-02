@@ -239,7 +239,7 @@ Dakle Elixir se izdvaja kao izbor u scenariju kada su pouzdanost, skalabilnost i
 
 
 > [!NOTE]
-> Na posletku autor ovog Elixir tutorijala predlaže da se odlgeda sledeći Elixir demonstracioni video jer su u njemu na kreativan način prikaze mogućnosti Elixir-a:
+> Na posletku autor ovog Elixir tutorijala predlaže da se odlgeda sledeći Elixir demonstracioni video jer su u njemu na kreativan način prikazane mogućnosti Elixir-a:
 >
 ><a href="https://www.youtube.com/watch?v=JvBT4XBdoUE
 " target="_blank"><img src="http://img.youtube.com/vi/JvBT4XBdoUE/0.jpg" 
